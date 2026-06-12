@@ -1,19 +1,24 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Post } from './entities/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { buildPaginationMeta } from '../common/dto/pagination.dto';
 
 @Injectable()
 export class PostsService {
   constructor(@InjectRepository(Post) private repo: Repository<Post>) {}
 
-  async findAll(onlyActive = true) {
-    return this.repo.find({
+  async findAll(onlyActive = true, page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+    const [items, total] = await this.repo.findAndCount({
       where: onlyActive ? { isActive: true } : {},
       order: { createdAt: 'DESC' },
+      skip,
+      take: limit,
     });
+    return { items, meta: buildPaginationMeta(page, limit, total) };
   }
 
   async findBySlug(slug: string) {

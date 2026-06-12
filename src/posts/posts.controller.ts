@@ -3,6 +3,7 @@ import { ApiTags, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -17,9 +18,16 @@ export class PostsController {
 
   @Public()
   @ApiQuery({ name: 'all', required: false, description: 'Admin: include inactive posts' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
   @Get()
-  findAll(@Query('all') all?: string) {
-    return this.service.findAll(all !== 'true');
+  findAll(
+    @Query('all') all?: string,
+    @Query() pagination?: PaginationDto,
+  ) {
+    const page  = Number(pagination?.page)  || 1;
+    const limit = Number(pagination?.limit) || 10;
+    return this.service.findAll(all !== 'true', page, limit);
   }
 
   @Public()

@@ -3,6 +3,7 @@ import { ApiTags, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -19,13 +20,18 @@ export class ProductsController {
   @ApiQuery({ name: 'categorySlug', required: false })
   @ApiQuery({ name: 'search', required: false })
   @ApiQuery({ name: 'featured', required: false })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
   @Get()
   findAll(
     @Query('categorySlug') categorySlug?: string,
     @Query('search') search?: string,
     @Query('featured') featured?: string,
+    @Query() pagination?: PaginationDto,
   ) {
-    return this.service.findAll({ categorySlug, search, featured: featured === 'true' });
+    const page  = Number(pagination?.page)  || 1;
+    const limit = Number(pagination?.limit) || 10;
+    return this.service.findAll({ categorySlug, search, featured: featured === 'true', page, limit });
   }
 
   @Public()

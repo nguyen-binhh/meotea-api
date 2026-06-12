@@ -68,8 +68,8 @@ async function seed() {
   }
 
   // ── Products ─────────────────────────────────────────────────────────────
-  const existingProds = await productsService.findAll();
-  if (existingProds.length === 0) {
+  const existingProds = await productsService.findAll({ page: 1, limit: 1 });
+  if (existingProds.meta.total === 0) {
     for (const prod of productData) {
       const { categorySlug, ...rest } = prod;
       await productsService.create({
@@ -79,19 +79,19 @@ async function seed() {
     }
     console.log(`🧋 Seeded ${productData.length} products.`);
   } else {
-    console.log(`🧋 Products already exist (${existingProds.length}), skipping. Use --reset to re-seed.`);
+    console.log(`🧋 Products already exist (${existingProds.meta.total}), skipping. Use --reset to re-seed.`);
   }
 
   // ── Posts ────────────────────────────────────────────────────────────────────
-  const existingPosts = await postsService.findAll(false);
-  if (existingPosts.length === 0) {
+  const existingPosts = await postsService.findAll(false, 1, 1);
+  if (existingPosts.meta.total === 0) {
     for (const post of postData) {
       const { slug, ...rest } = post;
       await postsService.create(rest);
     }
     console.log(`📰 Seeded ${postData.length} posts.`);
   } else {
-    console.log(`📰 Posts already exist (${existingPosts.length}), skipping. Use --reset to re-seed.`);
+    console.log(`📰 Posts already exist (${existingPosts.meta.total}), skipping. Use --reset to re-seed.`);
   }
 
   console.log('✅ Seed complete!');

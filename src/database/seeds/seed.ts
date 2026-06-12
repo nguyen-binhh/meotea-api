@@ -3,7 +3,8 @@ import { AppModule } from '../../app.module';
 import { CategoriesService } from '../../categories/categories.service';
 import { ProductsService } from '../../products/products.service';
 import { UsersService } from '../../users/users.service';
-import { categoryData, productData } from './data';
+import { PostsService } from '../../posts/posts.service';
+import { categoryData, productData, postData } from './data';
 import { Role } from '../../common/enums/role.enum';
 import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
@@ -16,6 +17,7 @@ async function seed() {
   const categoriesService = app.get(CategoriesService);
   const productsService   = app.get(ProductsService);
   const usersService      = app.get(UsersService);
+  const postsService      = app.get(PostsService);
   const dataSource        = app.get(DataSource);
 
   console.log('🌱 Starting seed...');
@@ -28,6 +30,7 @@ async function seed() {
     await dataSource.query('TRUNCATE TABLE `product_sizes`');
     await dataSource.query('TRUNCATE TABLE `products`');
     await dataSource.query('TRUNCATE TABLE `categories`');
+    await dataSource.query('TRUNCATE TABLE `posts`');
     await dataSource.query('SET FOREIGN_KEY_CHECKS = 1');
     console.log('✅ Tables cleared.');
   }
@@ -77,6 +80,18 @@ async function seed() {
     console.log(`🧋 Seeded ${productData.length} products.`);
   } else {
     console.log(`🧋 Products already exist (${existingProds.length}), skipping. Use --reset to re-seed.`);
+  }
+
+  // ── Posts ────────────────────────────────────────────────────────────────────
+  const existingPosts = await postsService.findAll(false);
+  if (existingPosts.length === 0) {
+    for (const post of postData) {
+      const { slug, ...rest } = post;
+      await postsService.create(rest);
+    }
+    console.log(`📰 Seeded ${postData.length} posts.`);
+  } else {
+    console.log(`📰 Posts already exist (${existingPosts.length}), skipping. Use --reset to re-seed.`);
   }
 
   console.log('✅ Seed complete!');

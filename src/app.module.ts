@@ -7,6 +7,8 @@ import { CategoriesModule } from './categories/categories.module';
 import { ProductsModule } from './products/products.module';
 import { OrdersModule } from './orders/orders.module';
 import { CartModule } from './cart/cart.module';
+import { PostsModule } from './posts/posts.module';
+import { Post } from './posts/entities/post.entity';
 import { User } from './users/entities/user.entity';
 import { Category } from './categories/entities/category.entity';
 import { Product } from './products/entities/product.entity';
@@ -29,7 +31,7 @@ import { CartItem } from './cart/entities/cart-item.entity';
         username: configService.get('DB_USERNAME', 'root'),
         password: configService.get('DB_PASSWORD', ''),
         database: configService.get('DB_DATABASE', 'meotea_db'),
-        entities: [User, Category, Product, ProductSize, ProductTopping, Order, OrderItem, Cart, CartItem],
+        entities: [User, Category, Product, ProductSize, ProductTopping, Order, OrderItem, Cart, CartItem, Post],
         synchronize: true,
         logging: false,
       }),
@@ -41,6 +43,7 @@ import { CartItem } from './cart/entities/cart-item.entity';
     ProductsModule,
     OrdersModule,
     CartModule,
+    PostsModule,
   ],
 })
 export class AppModule {}

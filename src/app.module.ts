@@ -9,8 +9,10 @@ import { OrdersModule } from './orders/orders.module';
 import { CartModule } from './cart/cart.module';
 import { PostsModule } from './posts/posts.module';
 import { PostCategoriesModule } from './post-categories/post-categories.module';
+import { CommentsModule } from './comments/comments.module';
 import { Post } from './posts/entities/post.entity';
 import { PostCategory } from './post-categories/entities/post-category.entity';
+import { Comment } from './comments/entities/comment.entity';
 import { User } from './users/entities/user.entity';
 import { Category } from './categories/entities/category.entity';
 import { Product } from './products/entities/product.entity';
@@ -33,7 +35,7 @@ import { CartItem } from './cart/entities/cart-item.entity';
         username: configService.get('DB_USERNAME', 'root'),
         password: configService.get('DB_PASSWORD', ''),
         database: configService.get('DB_DATABASE', 'meotea_db'),
-        entities: [User, Category, Product, ProductSize, ProductTopping, Order, OrderItem, Cart, CartItem, Post, PostCategory],
+        entities: [User, Category, Product, ProductSize, ProductTopping, Order, OrderItem, Cart, CartItem, Post, PostCategory, Comment],
         synchronize: true,
         logging: false,
       }),
@@ -47,6 +49,7 @@ import { CartItem } from './cart/entities/cart-item.entity';
     CartModule,
     PostsModule,
     PostCategoriesModule,
+    CommentsModule,
   ],
 })
 export class AppModule {}

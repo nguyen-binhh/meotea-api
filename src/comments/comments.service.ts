@@ -12,14 +12,34 @@ export class CommentsService {
   constructor(@InjectRepository(Comment) private repo: Repository<Comment>) {}
 
   async findAllByPost(postId: number, page = 1, limit = 10, includeInactive = false) {
-    const [items, total] = await this.repo.findAndCount({
-      where: { postId, ...(includeInactive ? {} : { isActive: true }) },
-      order: { createdAt: 'ASC' },
-      skip: (page - 1) * limit,
-      take: limit,
-      select: ['id', 'postId', 'userId', 'authorName', 'content', 'isActive', 'createdAt'],
-    });
+    const query = this.repo
+      .createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.user', 'user')
+      .where('comment.postId = :postId', { postId })
+      .orderBy('comment.createdAt', 'ASC')
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    if (!includeInactive) {
+      query.andWhere('comment.isActive = true');
+    }
+
+    const [raw, total] = await query.getManyAndCount();
+    const items = raw.map(c => this.toPublicComment(c));
     return { items, meta: buildPaginationMeta(page, limit, total) };
+  }
+
+  private toPublicComment(c: Comment) {
+    return {
+      id:           c.id,
+      postId:       c.postId,
+      userId:       c.userId,
+      authorName:   c.authorName,
+      authorAvatar: c.user?.media ?? null,
+      content:      c.content,
+      isActive:     c.isActive,
+      createdAt:    c.createdAt,
+    };
   }
 
   async create(postId: number, dto: CreateCommentDto, currentUser?: { id: number; name: string; email: string }) {
@@ -39,15 +59,15 @@ export class CommentsService {
       authorEmail = dto.authorEmail;
     }
 
-    const comment = this.repo.create({
-      postId,
-      userId,
-      authorName,
-      authorEmail,
-      content: dto.content,
-      isActive: true,
-    });
-    return this.repo.save(comment);
+    const saved = await this.repo.save(
+      this.repo.create({ postId, userId, authorName, authorEmail, content: dto.content, isActive: true }),
+    );
+    const full = await this.repo
+      .createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.user', 'user')
+      .where('comment.id = :id', { id: saved.id })
+      .getOne();
+    return this.toPublicComment(full);
   }
 
   async update(id: number, dto: UpdateCommentDto, currentUser: { id: number; role: string }) {

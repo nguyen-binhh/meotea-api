@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsBoolean } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, IsInt } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreatePostDto {
@@ -19,6 +19,11 @@ export class CreatePostDto {
   @IsOptional()
   @IsString()
   image?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  categoryId?: number;
 
   @ApiProperty({ required: false, default: true })
   @IsOptional()

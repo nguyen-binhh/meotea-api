@@ -1,27 +1,25 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, ParseIntPipe } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { PostsService } from './posts.service';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
-import { GetPostsDto } from './dto/get-posts.dto';
+import { ApiTags, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { PostCategoriesService } from './post-categories.service';
+import { CreatePostCategoryDto } from './dto/create-post-category.dto';
+import { UpdatePostCategoryDto } from './dto/update-post-category.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '../common/enums/role.enum';
 
-@ApiTags('posts')
+@ApiTags('post-categories')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Controller('posts')
-export class PostsController {
-  constructor(private service: PostsService) {}
+@Controller('post-categories')
+export class PostCategoriesController {
+  constructor(private service: PostCategoriesService) {}
 
   @Public()
+  @ApiQuery({ name: 'all', required: false, description: 'Admin: include inactive categories' })
   @Get()
-  findAll(@Query() query: GetPostsDto) {
-    const page  = Number(query.page)  || 1;
-    const limit = Number(query.limit) || 10;
-    return this.service.findAll(query.all !== 'true', page, limit, query.categorySlug);
+  findAll(@Query('all') all?: string) {
+    return this.service.findAll(all !== 'true');
   }
 
   @Public()
@@ -33,14 +31,14 @@ export class PostsController {
   @ApiBearerAuth()
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @Post()
-  create(@Body() dto: CreatePostDto) {
+  create(@Body() dto: CreatePostCategoryDto) {
     return this.service.create(dto);
   }
 
   @ApiBearerAuth()
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @Put(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdatePostDto) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdatePostCategoryDto) {
     return this.service.update(id, dto);
   }
 

@@ -10,19 +10,37 @@ import { buildPaginationMeta } from '../common/dto/pagination.dto';
 export class PostsService {
   constructor(@InjectRepository(Post) private repo: Repository<Post>) {}
 
-  async findAll(onlyActive = true, page = 1, limit = 10) {
+  async findAll(onlyActive = true, page = 1, limit = 10, categorySlug?: string) {
     const skip = (page - 1) * limit;
-    const [items, total] = await this.repo.findAndCount({
-      where: onlyActive ? { isActive: true } : {},
-      order: { createdAt: 'DESC' },
-      skip,
-      take: limit,
-    });
+
+    const query = this.repo
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.category', 'category')
+      .orderBy('post.createdAt', 'DESC')
+      .skip(skip)
+      .take(limit);
+
+    if (onlyActive) {
+      query.where('post.isActive = :isActive', { isActive: true });
+    }
+
+    if (categorySlug) {
+      const condition = onlyActive
+        ? 'category.slug = :categorySlug'
+        : 'category.slug = :categorySlug';
+      query.andWhere(condition, { categorySlug });
+    }
+
+    const [items, total] = await query.getManyAndCount();
     return { items, meta: buildPaginationMeta(page, limit, total) };
   }
 
   async findBySlug(slug: string) {
-    const post = await this.repo.findOne({ where: { slug } });
+    const post = await this.repo
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.category', 'category')
+      .where('post.slug = :slug', { slug })
+      .getOne();
     if (!post) throw new NotFoundException('Post not found');
     return post;
   }

@@ -1,3 +1,13 @@
+// ─── Post Categories ──────────────────────────────────────────────────────────
+
+export const postCategoryData = [
+  { name: 'Tin tức',    slug: 'tin-tuc',    description: 'Tin tức mới nhất từ Mèo Trà',               sortOrder: 1 },
+  { name: 'Khuyến mãi', slug: 'khuyen-mai', description: 'Ưu đãi và chương trình khuyến mãi hấp dẫn', sortOrder: 2 },
+  { name: 'Hướng dẫn',  slug: 'huong-dan',  description: 'Mẹo và hướng dẫn thưởng thức trà',          sortOrder: 3 },
+  { name: 'Sức khỏe',   slug: 'suc-khoe',   description: 'Trà và sức khỏe – những điều bạn cần biết', sortOrder: 4 },
+  { name: 'Câu chuyện', slug: 'cau-chuyen', description: 'Câu chuyện đằng sau những ly trà',          sortOrder: 5 },
+];
+
 // ─── Posts ────────────────────────────────────────────────────────────────────
 
 export const postData = [
@@ -5,6 +15,7 @@ export const postData = [
     title: 'Mèo Trà Chính Thức Khai Trương – Chào Mừng Bạn Đến Với Thế Giới Trà',
     subtitle: 'Hành trình từ những hạt trà thượng hạng đến ly nước ngon tuyệt',
     slug: 'meo-tra-chinh-thuc-khai-truong',
+    categorySlug: 'cau-chuyen',
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800',
     isActive: true,
     content: `<h2>Chào mừng bạn đến với Mèo Trà!</h2>
@@ -22,6 +33,7 @@ export const postData = [
     title: 'Bí Quyết Pha Trà Sữa Ngon Tại Nhà Theo Phong Cách Mèo Trà',
     subtitle: 'Hướng dẫn chi tiết từ A đến Z để có ly trà sữa hoàn hảo',
     slug: 'bi-quyet-pha-tra-sua-ngon-tai-nha',
+    categorySlug: 'huong-dan',
     image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=800',
     isActive: true,
     content: `<h2>Pha Trà Sữa Ngon Tại Nhà</h2>
@@ -48,6 +60,7 @@ export const postData = [
     title: 'Matcha – Siêu Thực Phẩm Xanh Và Những Lợi Ích Sức Khỏe Không Ngờ',
     subtitle: 'Tại sao matcha Nhật Bản lại được cả thế giới yêu thích?',
     slug: 'matcha-sieu-thuc-pham-xanh-loi-ich-suc-khoe',
+    categorySlug: 'suc-khoe',
     image: 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=800',
     isActive: true,
     content: `<h2>Matcha – Không Chỉ Là Màu Xanh</h2>
@@ -65,8 +78,9 @@ export const postData = [
   },
   {
     title: 'Top 5 Đồ Uống Hot Nhất Mùa Hè Tại Mèo Trà',
-    subtitle: 'Những ly nước giải nhiệt hoàn hảo cho những ngày猛 nắng',
+    subtitle: 'Những ly nước giải nhiệt hoàn hảo cho những ngày nắng',
     slug: 'top-5-do-uong-hot-nhat-mua-he',
+    categorySlug: 'tin-tuc',
     image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=800',
     isActive: true,
     content: `<h2>Mùa Hè Cần Gì? Cần Mèo Trà!</h2>
@@ -86,6 +100,7 @@ export const postData = [
     title: 'Trân Châu – Từ Đài Loan Đến Toàn Thế Giới',
     subtitle: 'Câu chuyện thú vị về nguồn gốc của nguyên liệu không thể thiếu trong trà sữa',
     slug: 'tran-chau-tu-dai-loan-den-toan-the-gioi',
+    categorySlug: 'cau-chuyen',
     image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800',
     isActive: true,
     content: `<h2>Hành Trình Của Những Viên Trân Châu</h2>
@@ -101,6 +116,7 @@ export const postData = [
     title: 'Oolong – Loại Trà Đặc Biệt Giữa Trà Xanh Và Trà Đen',
     subtitle: 'Khám phá thế giới phong phú của trà Oolong và cách thưởng thức đúng điệu',
     slug: 'oolong-loai-tra-dac-biet',
+    categorySlug: 'huong-dan',
     image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800',
     isActive: true,
     content: `<h2>Oolong – Nghệ Thuật Lên Men Không Hoàn Toàn</h2>
@@ -119,6 +135,7 @@ export const postData = [
     title: 'Chương Trình Khách Hàng Thân Thiết Mèo Trà – Tích Điểm Đổi Quà',
     subtitle: 'Mua nhiều tặng nhiều – Cảm ơn bạn đã đồng hành cùng Mèo Trà',
     slug: 'chuong-trinh-khach-hang-than-thiet',
+    categorySlug: 'khuyen-mai',
     image: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=800',
     isActive: true,
     content: `<h2>Ưu Đãi Dành Riêng Cho Khách Hàng Thân Thiết</h2>
@@ -141,6 +158,7 @@ export const postData = [
     title: 'Hậu Trường Mèo Trà – Một Ngày Làm Việc Của Barista',
     subtitle: 'Khám phá bí mật đằng sau mỗi ly trà được pha chế với tình yêu',
     slug: 'hau-truong-meo-tra-barista',
+    categorySlug: 'cau-chuyen',
     image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800',
     isActive: true,
     content: `<h2>Một Ngày Của Barista Mèo Trà</h2>
@@ -157,6 +175,7 @@ export const postData = [
     title: 'Trà Sữa Và Sức Khỏe – Những Điều Bạn Cần Biết Để Uống Đúng Cách',
     subtitle: 'Giải đáp mọi thắc mắc về việc uống trà sữa có ảnh hưởng đến sức khỏe không',
     slug: 'tra-sua-va-suc-khoe',
+    categorySlug: 'suc-khoe',
     image: 'https://images.unsplash.com/photo-1437418747212-8d9709afab22?w=800',
     isActive: true,
     content: `<h2>Uống Trà Sữa Đúng Cách – Vẫn Khỏe Mạnh Vui Vẻ!</h2>
@@ -178,6 +197,7 @@ export const postData = [
     title: 'Mùa Thu Về – Những Hương Vị Trà Đặc Biệt Chào Đón Tiết Trời Mới',
     subtitle: 'Menu giới hạn mùa thu với những nguyên liệu tươi ngon đặc trưng',
     slug: 'mua-thu-ve-huong-vi-tra-dac-biet',
+    categorySlug: 'tin-tuc',
     image: 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=800',
     isActive: false,
     content: `<h2>Chào Mùa Thu – Chào Những Hương Vị Mới!</h2>

@@ -19,7 +19,7 @@ import { CartItem } from './cart/entities/cart-item.entity';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -27,7 +27,7 @@ import { CartItem } from './cart/entities/cart-item.entity';
         host: configService.get('DB_HOST', 'localhost'),
         port: configService.get<number>('DB_PORT', 3306),
         username: configService.get('DB_USERNAME', 'root'),
-        password: configService.get('DB_PASSWORD', 'password'),
+        password: configService.get('DB_PASSWORD', ''),
         database: configService.get('DB_DATABASE', 'meotea_db'),
         entities: [User, Category, Product, ProductSize, ProductTopping, Order, OrderItem, Cart, CartItem],
         synchronize: true,

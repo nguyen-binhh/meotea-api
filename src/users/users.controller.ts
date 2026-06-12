@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Delete, Param, Body, UseGuards, ParseIntPipe, Post, UploadedFile, UseInterceptors, Req, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Patch, Delete, Param, Body, UseGuards, ParseIntPipe, Post, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -11,7 +11,8 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Role } from '../common/enums/role.enum';
-import { Request } from 'express';
+
+const ALLOWED_IMAGE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp']);
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -36,7 +37,10 @@ export class UsersController {
         },
       }),
       fileFilter: (req, file, cb) => {
-        if (!file.mimetype.match(/image\/(jpg|jpeg|png|gif|webp)/)) {
+        const ext = extname(file.originalname).toLowerCase();
+        const mimeOk = /^image\/(jpg|jpeg|png|gif|webp)$/.test(file.mimetype);
+        const extOk = ALLOWED_IMAGE_EXTENSIONS.has(ext);
+        if (!mimeOk || !extOk) {
           cb(new BadRequestException('Only image files allowed'), false);
         } else {
           cb(null, true);
@@ -49,11 +53,9 @@ export class UsersController {
     @CurrentUser() user: any,
     @Body() dto: UpdateProfileDto,
     @UploadedFile() file: Express.Multer.File,
-    @Req() req: Request,
   ) {
-    const mediaUrl = file
-      ? `${req.protocol}://${req.get('host')}/uploads/avatars/${file.filename}`
-      : undefined;
+    const baseUrl = process.env.APP_URL || 'http://localhost:3001';
+    const mediaUrl = file ? `${baseUrl}/uploads/avatars/${file.filename}` : undefined;
     return this.usersService.updateProfile(user.id, dto, mediaUrl);
   }
 

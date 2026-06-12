@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -17,7 +17,10 @@ export class OrdersController {
 
   @Public()
   @Post()
-  create(@Body() dto: CreateOrderDto) { return this.service.create(dto); }
+  create(@Body() dto: CreateOrderDto, @Request() req: any) {
+    const userId: number | null = req.user?.id ?? null;
+    return this.service.create(dto, userId);
+  }
 
   @ApiBearerAuth()
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)

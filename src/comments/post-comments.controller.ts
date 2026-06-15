@@ -1,7 +1,8 @@
 import { Controller, Get, Post, Body, Param, Query, UseGuards, ParseIntPipe } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiQuery, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { CreateReactionDto } from './dto/create-reaction.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -15,9 +16,7 @@ export class PostCommentsController {
   constructor(private service: CommentsService) {}
 
   @Public()
-  @ApiOperation({ summary: 'Get comments for a post' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiOperation({ summary: 'Get top-level comments for a post' })
   @Get(':postId/comments')
   findAll(
     @Param('postId', ParseIntPipe) postId: number,
@@ -28,8 +27,8 @@ export class PostCommentsController {
     return this.service.findAllByPost(postId, page, limit);
   }
 
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Add a comment to a post (auth optional — guests must provide authorName)' })
+  @Public()
+  @ApiOperation({ summary: 'Add a comment or reply to a post' })
   @Post(':postId/comments')
   create(
     @Param('postId', ParseIntPipe) postId: number,
@@ -37,5 +36,23 @@ export class PostCommentsController {
     @CurrentUser() currentUser: any,
   ) {
     return this.service.create(postId, dto, currentUser ?? undefined);
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Get reaction counts for a post' })
+  @Get(':postId/reactions')
+  getPostReactions(@Param('postId', ParseIntPipe) postId: number) {
+    return this.service.getPostReactionCounts(postId);
+  }
+
+  @Public()
+  @ApiOperation({ summary: 'Toggle emoji reaction on a post' })
+  @Post(':postId/react')
+  togglePostReaction(
+    @Param('postId', ParseIntPipe) postId: number,
+    @Body() dto: CreateReactionDto,
+    @CurrentUser() currentUser: any,
+  ) {
+    return this.service.togglePostReaction(postId, dto, currentUser ?? undefined);
   }
 }

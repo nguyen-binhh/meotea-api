@@ -1,5 +1,6 @@
-import { IsString, IsOptional, IsEmail, MinLength, MaxLength } from 'class-validator';
+import { IsString, IsOptional, IsEmail, IsInt, MinLength, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 export class CreateCommentDto {
   @ApiProperty({ required: false, description: 'Required for guest users, ignored for authenticated users' })
@@ -18,4 +19,10 @@ export class CreateCommentDto {
   @MinLength(2)
   @MaxLength(2000)
   content: string;
+
+  @ApiProperty({ required: false, description: 'Parent comment ID for replies' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  parentId?: number;
 }

@@ -28,6 +28,10 @@ export class OrdersController {
   findAll() { return this.service.findAll(); }
 
   @ApiBearerAuth()
+  @Get('my')
+  findMy(@Request() req: any) { return this.service.findMyOrders(req.user.id); }
+
+  @ApiBearerAuth()
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @Get(':id')
   findOne(@Param('id') id: string) { return this.service.findOne(id); }

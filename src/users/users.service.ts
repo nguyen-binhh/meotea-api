@@ -62,4 +62,36 @@ export class UsersService {
     const { password, ...result } = saved;
     return result;
   }
+
+  async findByVerificationToken(token: string) {
+    return this.repo.findOne({ where: { emailVerificationToken: token } });
+  }
+
+  async findByPasswordResetToken(token: string) {
+    return this.repo.findOne({ where: { passwordResetToken: token } });
+  }
+
+  async setEmailVerificationToken(userId: number, token: string, expires: Date) {
+    await this.repo.update(userId, { emailVerificationToken: token, emailVerificationExpires: expires });
+  }
+
+  async markEmailVerified(userId: number) {
+    await this.repo.update(userId, {
+      emailVerified: true,
+      emailVerificationToken: null,
+      emailVerificationExpires: null,
+    });
+  }
+
+  async setPasswordResetToken(userId: number, token: string, expires: Date) {
+    await this.repo.update(userId, { passwordResetToken: token, passwordResetExpires: expires });
+  }
+
+  async updatePassword(userId: number, hashedPassword: string) {
+    await this.repo.update(userId, {
+      password: hashedPassword,
+      passwordResetToken: null,
+      passwordResetExpires: null,
+    });
+  }
 }

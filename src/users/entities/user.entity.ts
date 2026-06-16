@@ -27,6 +27,21 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
+  @Column({ default: false })
+  emailVerified: boolean;
+
+  @Column({ nullable: true, type: 'varchar', length: 64 })
+  emailVerificationToken: string | null;
+
+  @Column({ nullable: true, type: 'datetime' })
+  emailVerificationExpires: Date | null;
+
+  @Column({ nullable: true, type: 'varchar', length: 64 })
+  passwordResetToken: string | null;
+
+  @Column({ nullable: true, type: 'datetime' })
+  passwordResetExpires: Date | null;
+
   @CreateDateColumn()
   createdAt: Date;
 

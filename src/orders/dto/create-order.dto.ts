@@ -1,4 +1,4 @@
-import { IsString, IsEnum, IsNumber, IsOptional, IsArray, ValidateNested, Min } from 'class-validator';
+import { IsString, IsEnum, IsNumber, IsOptional, IsArray, ValidateNested, Min, IsEmail } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PaymentMethod } from '../../common/enums/payment-method.enum';
 
@@ -17,6 +17,7 @@ export class CreateOrderDto {
   @IsString() customerPhone: string;
   @IsString() customerAddress: string;
   @IsOptional() @IsString() customerNote?: string;
+  @IsOptional() @IsEmail() customerEmail?: string;
   @IsEnum(PaymentMethod) paymentMethod: PaymentMethod;
   @IsArray() @ValidateNested({ each: true }) @Type(() => CreateOrderItemDto) items: CreateOrderItemDto[];
 }

@@ -7,6 +7,8 @@ import { OrderStatus } from '../common/enums/order-status.enum';
 import { Product } from '../products/entities/product.entity';
 import { ProductSize } from '../products/entities/product-size.entity';
 import { ProductTopping } from '../products/entities/product-topping.entity';
+import { User } from '../users/entities/user.entity';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class OrdersService {
@@ -15,6 +17,8 @@ export class OrdersService {
     @InjectRepository(Product) private productRepo: Repository<Product>,
     @InjectRepository(ProductSize) private sizeRepo: Repository<ProductSize>,
     @InjectRepository(ProductTopping) private toppingRepo: Repository<ProductTopping>,
+    @InjectRepository(User) private userRepo: Repository<User>,
+    private mailService: MailService,
   ) {}
 
   async create(dto: CreateOrderDto, userId: number | null) {
@@ -70,7 +74,23 @@ export class OrdersService {
       userId: userId ?? undefined,
       items: resolvedItems as any,
     });
-    return this.repo.save(order);
+    const saved = await this.repo.save(order);
+
+    // Gửi email xác nhận nếu có địa chỉ email
+    const emailTo = userId
+      ? (await this.userRepo.findOne({ where: { id: userId }, select: ['email'] }))?.email
+      : dto.customerEmail;
+
+    if (emailTo) {
+      this.mailService.sendOrderConfirmationEmail(emailTo, {
+        ...saved,
+        subtotal: Number(saved.subtotal),
+        total: Number(saved.total),
+        items: resolvedItems,
+      }).catch(() => null);
+    }
+
+    return saved;
   }
 
   findAll() {

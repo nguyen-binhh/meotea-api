@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <title>Xác nhận đơn hàng</title>
+  <style>
+    @media (prefers-color-scheme: dark) {
+      body, .body-wrap  { background-color: #1A1A2E !important; }
+      .card             { background-color: #16213E !important; box-shadow: 0 8px 40px rgba(0,0,0,0.4) !important; }
+      .surface          { background-color: #1E2D4F !important; }
+      .table-header     { background-color: #1E2D4F !important; }
+      .table-wrap       { border-color: #2D1B4E !important; }
+      .item-row         { border-top-color: #2D1B4E !important; }
+      .info-block       { background: linear-gradient(135deg,#1A1428,#2A1040) !important; border-left-color: #CE93D8 !important; }
+      .note-block       { background-color: #1E2D20 !important; border-left-color: #66BB6A !important; }
+      .footer-cell      { background-color: #120E22 !important; border-top-color: #2D1B4E !important; }
+      .divider          { border-top-color: #2D1B4E !important; }
+      .divider-heavy    { border-top-color: #2D1B4E !important; }
+      .text-primary     { color: #F0E6FF !important; }
+      .text-secondary   { color: #C8B8E8 !important; }
+      .text-muted       { color: #9080B0 !important; }
+      .text-label       { color: #7060A0 !important; }
+      .text-footer      { color: #60508A !important; }
+      .text-total-label { color: #F0E6FF !important; }
+      .product-name     { color: #F0E6FF !important; }
+      .product-detail   { color: #9080B0 !important; }
+      .qty-text         { color: #C8B8E8 !important; }
+    }
+  </style>
+</head>
+<body class="body-wrap" style="margin:0;padding:0;background:#f8f0ff;font-family:'Nunito',Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f8f0ff;padding:40px 16px;">
+  <tr><td align="center">
+    <table class="card" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 8px 40px rgba(206,147,216,0.2);">
+
+      <!-- Header -->
+      <tr>
+        <td style="background:linear-gradient(135deg,#CE93D8 0%,#F48FB1 100%);padding:36px;text-align:center;">
+          <div style="font-size:44px;margin-bottom:8px;">🐱</div>
+          <div style="color:#fff;font-size:24px;font-weight:900;letter-spacing:2px;">Mèo Trà</div>
+          <div style="color:rgba(255,255,255,0.85);font-size:13px;margin-top:6px;">Đơn hàng của bạn đã được xác nhận!</div>
+        </td>
+      </tr>
+
+      <!-- Greeting -->
+      <tr>
+        <td style="padding:32px 40px 0;">
+          <p class="text-primary" style="font-size:16px;color:#333;margin:0 0 8px;">Xin chào, <strong style="color:#CE93D8;">{{customerName}}</strong>! 🎉</p>
+          <p class="text-secondary" style="font-size:14px;color:#666;margin:0;line-height:1.7;">Cảm ơn bạn đã đặt hàng tại Mèo Trà. Chúng tôi đã nhận được đơn hàng và đang chuẩn bị ngay!</p>
+        </td>
+      </tr>
+
+      <!-- Order Info -->
+      <tr>
+        <td style="padding:24px 40px 0;">
+          <table class="surface" width="100%" cellpadding="0" cellspacing="0" style="background:#fdf5ff;border-radius:12px;">
+            <tr>
+              <td style="padding:16px 20px;">
+                <table width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="text-label" style="font-size:13px;color:#999;padding:5px 0;">Mã đơn hàng</td>
+                    <td align="right" style="font-size:13px;font-weight:700;color:#CE93D8;padding:5px 0;">{{orderId}}</td>
+                  </tr>
+                  <tr><td colspan="2"><hr class="divider" style="border:none;border-top:1px solid #f0e0ff;margin:2px 0;"></td></tr>
+                  <tr>
+                    <td class="text-label" style="font-size:13px;color:#999;padding:5px 0;">Ngày đặt</td>
+                    <td class="text-secondary" align="right" style="font-size:13px;color:#555;padding:5px 0;">{{orderDate}}</td>
+                  </tr>
+                  <tr><td colspan="2"><hr class="divider" style="border:none;border-top:1px solid #f0e0ff;margin:2px 0;"></td></tr>
+                  <tr>
+                    <td class="text-label" style="font-size:13px;color:#999;padding:5px 0;">Địa chỉ giao</td>
+                    <td class="text-secondary" align="right" style="font-size:13px;color:#555;padding:5px 0;">{{customerAddress}}</td>
+                  </tr>
+                  <tr><td colspan="2"><hr class="divider" style="border:none;border-top:1px solid #f0e0ff;margin:2px 0;"></td></tr>
+                  <tr>
+                    <td class="text-label" style="font-size:13px;color:#999;padding:5px 0;">Thanh toán</td>
+                    <td class="text-secondary" align="right" style="font-size:13px;color:#555;padding:5px 0;">{{paymentMethod}}</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- Items -->
+      <tr>
+        <td style="padding:24px 40px 0;">
+          <p class="text-primary" style="font-size:14px;font-weight:700;color:#333;margin:0 0 12px;">🧋 Sản phẩm đã đặt</p>
+          <table class="table-wrap" width="100%" cellpadding="0" cellspacing="0" style="border-radius:12px;overflow:hidden;border:1px solid #f0e0ff;">
+            <tr class="table-header" style="background:#fdf5ff;">
+              <td class="text-label" style="font-size:12px;color:#999;padding:10px 16px;font-weight:700;">SẢN PHẨM</td>
+              <td class="text-label" align="center" style="font-size:12px;color:#999;padding:10px 8px;font-weight:700;">SL</td>
+              <td class="text-label" align="right" style="font-size:12px;color:#999;padding:10px 16px;font-weight:700;">THÀNH TIỀN</td>
+            </tr>
+            {{itemRows}}
+          </table>
+        </td>
+      </tr>
+
+      <!-- Total -->
+      <tr>
+        <td style="padding:16px 40px 0;">
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td class="text-label" style="font-size:14px;color:#999;padding:4px 0;">Tạm tính</td>
+              <td class="text-secondary" align="right" style="font-size:14px;color:#555;padding:4px 0;">{{subtotal}}</td>
+            </tr>
+            <tr>
+              <td colspan="2"><hr class="divider-heavy" style="border:none;border-top:2px solid #f0e0ff;margin:12px 0;"></td>
+            </tr>
+            <tr>
+              <td class="text-total-label" style="font-size:16px;font-weight:900;color:#333;">Tổng cộng</td>
+              <td align="right" style="font-size:18px;font-weight:900;color:#CE93D8;">{{total}}</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- Note (optional) -->
+      {{customerNoteBlock}}
+
+      <!-- Info block -->
+      <tr>
+        <td style="padding:28px 40px;">
+          <table class="info-block" width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg,#fdf5ff,#fff0f5);border-radius:12px;border-left:4px solid #CE93D8;">
+            <tr>
+              <td class="text-secondary" style="font-size:14px;color:#555;line-height:1.8;padding:16px 20px;">
+                🚀 Đơn hàng sẽ được giao trong <strong>30–45 phút</strong>.<br>
+                📞 Nếu cần hỗ trợ, hãy gọi <strong style="color:#CE93D8;">1800-MEOTEA</strong> hoặc nhắn tin fanpage.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- Footer -->
+      <tr>
+        <td class="footer-cell" style="background:#fdf5ff;padding:20px 40px;text-align:center;border-top:1px solid #f0e0ff;">
+          <p class="text-footer" style="font-size:12px;color:#ccc;margin:0;">© 2024 Mèo Trà • Một ngụm yêu thương 🐱</p>
+        </td>
+      </tr>
+
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>

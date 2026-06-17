@@ -94,4 +94,16 @@ export class UsersService {
       passwordResetExpires: null,
     });
   }
+
+  async findByRefreshToken(token: string) {
+    return this.repo.findOne({ where: { refreshToken: token } });
+  }
+
+  async setRefreshToken(userId: number, token: string, expires: Date) {
+    await this.repo.update(userId, { refreshToken: token, refreshTokenExpires: expires });
+  }
+
+  async clearRefreshToken(userId: number) {
+    await this.repo.update(userId, { refreshToken: null, refreshTokenExpires: null });
+  }
 }

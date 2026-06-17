@@ -12,6 +12,8 @@ import { MailService } from '../mail/mail.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 
+const REFRESH_TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -41,13 +43,11 @@ export class AuthService {
     const valid = await bcrypt.compare(dto.password, user.password);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
     if (!user.isActive) throw new UnauthorizedException('Account is deactivated');
-    // Only block login if user has a pending verification token (registered after email-verify feature)
-    // Legacy users (emailVerificationToken = null) are treated as verified
     if (!user.emailVerified && user.emailVerificationToken !== null) {
       throw new UnauthorizedException('Email not verified. Please check your inbox.');
     }
     const { password, ...result } = user as any;
-    return { user: result, access_token: this.signToken(user) };
+    return { user: result, ...(await this.issueTokens(user.id, user)) };
   }
 
   async verifyEmail(token: string) {
@@ -59,7 +59,7 @@ export class AuthService {
     await this.usersService.markEmailVerified(user.id);
     const refreshed = await this.usersService.findById(user.id);
     const { password, ...result } = refreshed as any;
-    return { user: result, access_token: this.signToken(refreshed!) };
+    return { user: result, ...(await this.issueTokens(refreshed!.id, refreshed!)) };
   }
 
   async resendVerification(email: string) {
@@ -97,7 +97,34 @@ export class AuthService {
     await this.usersService.updatePassword(user.id, hashed);
     const refreshed = await this.usersService.findById(user.id);
     const { password, ...result } = refreshed as any;
-    return { user: result, access_token: this.signToken(refreshed!) };
+    return { user: result, ...(await this.issueTokens(refreshed!.id, refreshed!)) };
+  }
+
+  async refresh(refreshToken: string) {
+    const user = await this.usersService.findByRefreshToken(refreshToken);
+    if (!user) throw new UnauthorizedException('Invalid refresh token');
+    if (!user.refreshTokenExpires || user.refreshTokenExpires < new Date()) {
+      await this.usersService.clearRefreshToken(user.id);
+      throw new UnauthorizedException('Refresh token has expired. Please log in again.');
+    }
+    if (!user.isActive) throw new UnauthorizedException('Account is deactivated');
+    const { password, ...result } = user as any;
+    return { user: result, ...(await this.issueTokens(user.id, user)) };
+  }
+
+  async logout(userId: number) {
+    await this.usersService.clearRefreshToken(userId);
+    return { message: 'Logged out successfully' };
+  }
+
+  private async issueTokens(userId: number, user: any) {
+    const refreshToken = crypto.randomBytes(40).toString('hex');
+    const refreshExpires = new Date(Date.now() + REFRESH_TOKEN_TTL_MS);
+    await this.usersService.setRefreshToken(userId, refreshToken, refreshExpires);
+    return {
+      access_token: this.signToken(user),
+      refresh_token: refreshToken,
+    };
   }
 
   private signToken(user: any) {
